@@ -1,0 +1,20 @@
+{
+  "name": "fyyur",
+  "version": "0.0.1",
+  "description": "Fyyur is a musical venue and artist booking site that facilitates the discovery and bookings of shows between local performing artists and venues.",
+  "main": "app.py",
+  "scripts": {
+    "test": "echo 'No test command specified'"
+  },
+  "keywords": [
+    "Fyyur",
+    "Project",
+    "FSND",
+    "Nano-degree"
+  ],
+  "author": "Emmanuel Agbavwe",
+  "license": "ISC",
+  "dependencies": {
+    "bootstrap": "^3.4.1"
+  }
+}
