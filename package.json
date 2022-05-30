@@ -4,6 +4,7 @@
   "description": "Fyyur is a musical venue and artist booking site that facilitates the discovery and bookings of shows between local performing artists and venues.",
   "main": "app.py",
   "scripts": {
+    "start": "python app.py",
     "test": "echo 'No test command specified'"
   },
   "keywords": [
@@ -12,8 +13,16 @@
     "FSND",
     "Nano-degree"
   ],
-  "author": "Emmanuel Agbavwe",
+  "author": "Emmanuel Agbavwe",  
   "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/Aro1914/Fyyur-Project.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Aro1914/Fyyur-Project/issues"
+  },
+  "homepage": "https://github.com/Aro1914/Fyyur-Project#readme",
   "dependencies": {
     "bootstrap": "^3.4.1"
   }
