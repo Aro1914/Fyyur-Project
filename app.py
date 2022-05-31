@@ -7,96 +7,20 @@ from enum import unique
 import json
 import dateutil.parser
 import babel
-from flask import Flask, render_template, request, Response, flash, redirect, url_for, abort, jsonify
-from flask_moment import Moment
-from flask_sqlalchemy import SQLAlchemy
+from flask import render_template, request, Response, flash, redirect, url_for, abort, jsonify
 import logging
 from logging import Formatter, FileHandler
 from flask_wtf import Form
 from forms import *
-from flask_migrate import Migrate
 import os
+from models import Show, Venue, Artist, app, db
 #----------------------------------------------------------------------------#
 # App Config.
 #----------------------------------------------------------------------------#
 
-app = Flask(__name__)
-moment = Moment(app)
-app.config.from_object('config')
-db = SQLAlchemy(app)
-migrate = Migrate(app, db)
 
 # TODO: connect to a local postgresql database
 
-#----------------------------------------------------------------------------#
-# Models.
-#----------------------------------------------------------------------------#
-
-
-class Show(db.Model):
-    # Table name
-    __tablename__ = 'shows'
-    id = db.Column(db.Integer, primary_key=True)
-    artist_id = db.Column(db.Integer, db.ForeignKey(
-        'artists.id', ondelete='CASCADE'), nullable=False)
-    venue_id = db.Column(db.Integer, db.ForeignKey(
-        'venues.id', ondelete='CASCADE'), nullable=False)
-    start_time = db.Column(db.DateTime, nullable=False)
-    venue = db.relationship('Venue', back_populates='artists_show',
-                            lazy=True, cascade='all, delete', passive_deletes=True)
-    artist = db.relationship('Artist', back_populates='venues_show',
-                             lazy=True, cascade='all, delete', passive_deletes=True)
-
-
-class Venue(db.Model):
-    __tablename__ = 'venues'
-
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(), nullable=False)
-    city = db.Column(db.String(120), nullable=False)
-    state = db.Column(db.String(2), nullable=False)
-    address = db.Column(db.String(300), nullable=False)
-    genres = db.Column(db.ARRAY(db.String()), nullable=False)
-    phone = db.Column(db.String(15), nullable=True)
-    website = db.Column(db.String(500), nullable=True)
-    image_link = db.Column(db.String(500), nullable=True)
-    facebook_link = db.Column(db.String(), nullable=True)
-    seeking_talent = db.Column(db.Boolean, default=False, nullable=False)
-    seeking_description = db.Column(db.String(500), nullable=True)
-
-    artists_show = db.relationship(
-        "Show", back_populates="venue", cascade='all, delete')
-
-    def __repr__(self):
-        return f"\n<Venue id: {self.id} name: {self.name}>"
-
-    # TODO: implement any missing fields, as a database migration using Flask-Migrate
-
-
-class Artist(db.Model):
-    __tablename__ = 'artists'
-
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(), nullable=False)
-    city = db.Column(db.String(120), nullable=False)
-    state = db.Column(db.String(2), nullable=False)
-    phone = db.Column(db.String(15), nullable=True, unique=True)
-    genres = db.Column(db.ARRAY(db.String()), nullable=False)
-    image_link = db.Column(db.String(500), nullable=True)
-    facebook_link = db.Column(db.String(500), nullable=True)
-    website = db.Column(db.String(500), nullable=True)
-    seeking_venue = db.Column(db.Boolean, default=False, nullable=False)
-    seeking_description = db.Column(db.String(300), nullable=True)
-
-    venues_show = db.relationship(
-        "Show", back_populates="artist", cascade='all, delete')
-
-    def __repr__(self):
-        return f"\n<Artist id: {self.id} name: {self.name} location_id: {self.location_id}>"
-
-    # TODO: implement any missing fields, as a database migration using Flask-Migrate
-
-# TODO Implement Show and Artist models, and complete all model relationships and properties, as a database migration.
 
 #----------------------------------------------------------------------------#
 # Filters.
@@ -224,7 +148,8 @@ def search_venues():
             "data": venues
         }
     except:
-        flash(f"Sorry, an error occurred while fetching your search results.", category="error")
+        flash(f"Sorry, an error occurred while fetching your search results.",
+              category="error")
         abort(500)
     finally:
         return render_template('pages/search_venues.html', results=response, search_term=request.form.get('search_term', ''))
@@ -394,7 +319,8 @@ def create_venue_submission():
         # on successful db insert, flash success
         flash(f"Venue {request.form['name']} was successfully listed!")
     except:
-        flash(f"Venue {request.form['name']} could not be listed!", category="error")
+        flash(
+            f"Venue {request.form['name']} could not be listed!", category="error")
         db.session.rollback()
         abort(500)
     finally:
@@ -412,15 +338,16 @@ def delete_venue(venue_id):
     try:
         Venue.query.filter(Venue.id == venue_id).delete()
         db.session.commit()
-        db.session.close()
         flash(f'Venue with id {venue_id} was successfully deleted!')
     except:
-        flash(f'Venue with id {venue_id} could not be deleted!', category="error")
+        flash(
+            f'Venue with id {venue_id} could not be deleted!', category="error")
         db.session.rollback()
         abort(500)
     # BONUS CHALLENGE: Implement a button to delete a Venue on a Venue Page, have it so that
     # clicking that button delete it from the db then redirect the user to the homepage
     finally:
+        db.session.close()
         return jsonify({"homeUrl": '/'})
 
 #  Artists
@@ -490,7 +417,8 @@ def search_artists():
             "data": artists
         }
     except:
-        flash(f"Sorry, an error occurred while fetching your search results.", category="error")
+        flash(f"Sorry, an error occurred while fetching your search results.",
+              category="error")
         abort(500)
     finally:
         return render_template('pages/search_artists.html', results=response, search_term=request.form.get('search_term', ''))
@@ -680,6 +608,7 @@ def edit_artist_submission(artist_id):
         db.session.rollback()
         abort(500)
     finally:
+        db.session.close()
         return redirect(url_for('show_artist', artist_id=artist_id))
 
 
@@ -733,6 +662,7 @@ def edit_venue_submission(venue_id):
         db.session.rollback()
         abort(500)
     finally:
+        db.session.close()
         return redirect(url_for('show_venue', venue_id=venue_id))
 
 #  Create Artist
@@ -752,6 +682,7 @@ def create_artist_submission():
     # TODO: modify data to be the data object returned from db insertion
     # print(request.form)
     try:
+        phoneExists = False
         if not Artist.query.filter(Artist.phone == request.form['phone']).count() > 0:
             artist = Artist(name=request.form['name'], city=request.form['city'], state=request.form['state'], phone=request.form['phone'], image_link=request.form['image_link'],
                             genres=request.form.getlist('genres', type=str), facebook_link=request.form['facebook_link'], website=request.form['website_link'], seeking_venue='seeking_venue' in request.form, seeking_description=request.form['seeking_description'])
@@ -762,11 +693,11 @@ def create_artist_submission():
             # e.g., flash('An error occurred. Artist ' + data.name + ' could not be listed.')
             flash(f"Artist {request.form['name']} was successfully listed!")
         else:
-            flash('Phone number already exists', category="info")
-            db.session.rollback()
-            abort()
+            phoneExists = True
+            raise
     except:
-        flash(f"Sorry, the artist could not be listed.", category="error")
+        flash(
+            f"Sorry, the artist could not be listed{' because the phone number provided already exists in our database' if phoneExists else ''}!", category="error")
         db.session.rollback()
         abort(500)
     finally:
@@ -778,11 +709,14 @@ def delete_artist(artist_id):
     try:
         Artist.query.filter(Artist.id == artist_id).delete()
         db.session.commit()
-        db.session.close()
         flash(f"Artist with id { artist_id } was successfully deleted!")
     except:
-        flash(f"Sorry, Artist with id { artist_id } could not be deleted!", category="error")
+        flash(
+            f"Sorry, Artist with id { artist_id } could not be deleted!", category="error")
+        db.session.rollback()
+        abort(500)
     finally:
+        db.session.close()
         return jsonify({"homeUrl": '/'})
 
 #  Shows
@@ -866,19 +800,34 @@ def create_show_submission():
     # called to create new shows in the db, upon submitting new show listing form
     # TODO: insert form data as a new Show record in the db, instead
     try:
+        artistFound = True
+        venueFound = True
+        if Artist.query.filter(Artist.id == request.form['artist_id']).count() == 0:
+            artistFound = False
+            raise
+
+        if Venue.query.filter(Venue.id == request.form['venue_id']).count() == 0:
+            venueFound = False
+            raise
+        # print('Datatimes', datetime.fromisoformat(str(request.form['start_time'])), str(
+        #     request.form['start_time']), request.form['start_time'])
         show = Show(artist_id=request.form['artist_id'],
-                    venue_id=request.form['venue_id'], start_time=request.form['start_time'])
+                    venue_id=request.form['venue_id'], start_time=datetime.fromisoformat(str(request.form['start_time'])))
         db.session.add(show)
         db.session.commit()
-    # on successful db insert, flash success
+        # on successful db insert, flash success
         flash('Show was successfully listed!')
     except:
         # TODO: on unsuccessful db insert, flash an error instead.
         # e.g., flash('An error occurred. Show could not be listed.')
         # see: http://flask.pocoo.org/docs/1.0/patterns/flashing/
-        flash('Show could not be listed!', category="error")
+        flash(
+            f"""Show could not be listed{f" because the {'Artist' if not artistFound else 'Venue' if not venueFound else ''} ID provided does not exist in our database" if not(artistFound or venueFound) else ''}!""", category="error")
+        db.session.rollback()
+        abort(500)
     finally:
-        return render_template('pages/home.html')
+        db.session.close()
+    return render_template('pages/home.html')
 
 
 @app.errorhandler(404)
