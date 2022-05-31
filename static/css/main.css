@@ -1,9 +1,7 @@
-
 /**
  * @file
  * Main stylesheet file.
  */
-
 
 /*****************************************************************************
  * Main elements
@@ -21,7 +19,9 @@ a {
   cursor: pointer;
   color: #ff8c3a;
 }
-.navbar-default .navbar-nav>.active>a, .navbar-default .navbar-nav>.active>a:hover, .navbar-default .navbar-nav>.active>a:focus {
+.navbar-default .navbar-nav > .active > a,
+.navbar-default .navbar-nav > .active > a:hover,
+.navbar-default .navbar-nav > .active > a:focus {
   background: initial;
   color: initial;
 }
@@ -30,18 +30,17 @@ p.lead {
 }
 ::selection {
   background: #555;
-  color: #FFF;
+  color: #fff;
 }
 ::-moz-selection {
   background: #555;
-  color: #FFF;
+  color: #fff;
 }
 ::-webkit-selection {
   background: #555;
-  color: #FFF;
+  color: #fff;
 }
 /* Main elements end */
-
 
 /*****************************************************************************
  * Various other styles
@@ -50,7 +49,7 @@ p.lead {
 /* Various other styles end */
 
 #front-splash {
-	width: 100%;
+  width: 100%;
 }
 .navbar.navbar-fixed-top {
   background: none;
@@ -64,11 +63,12 @@ p.lead {
   width: 300px;
   margin-right: 15px;
 }
-.navbar-default .navbar-nav>.open>a, .navbar-default .navbar-nav>.active>a {
-    background: none;
-    box-shadow: none;
-    color: black;
-    font-weight: bold;
+.navbar-default .navbar-nav > .open > a,
+.navbar-default .navbar-nav > .active > a {
+  background: none;
+  box-shadow: none;
+  color: black;
+  font-weight: bold;
 }
 .navbar-nav .search input {
   border-radius: 50px;
@@ -81,10 +81,10 @@ p.lead {
 }
 
 .btn-default {
-    border: none;
-    background-color: #dde2e7;
-    background-image: linear-gradient(#dde2e7,#dde2e7);
-    color: #444;
+  border: none;
+  background-color: #dde2e7;
+  background-image: linear-gradient(#dde2e7, #dde2e7);
+  color: #444;
 }
 
 #content h3 {
@@ -93,7 +93,7 @@ p.lead {
 }
 
 #content h3 button {
-    margin-right: 10px;
+  margin-right: 10px;
 }
 
 ul.items {
