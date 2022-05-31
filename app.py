@@ -817,12 +817,12 @@ def create_show_submission():
         db.session.commit()
         # on successful db insert, flash success
         flash('Show was successfully listed!')
-    except:
+    except ValueError as e:
         # TODO: on unsuccessful db insert, flash an error instead.
         # e.g., flash('An error occurred. Show could not be listed.')
         # see: http://flask.pocoo.org/docs/1.0/patterns/flashing/
         flash(
-            f"""Show could not be listed{f" because the {'Artist' if not artistFound else 'Venue' if not venueFound else ''} ID provided does not exist in our database" if not(artistFound or venueFound) else ''}!""", category="error")
+            f"""Show could not be listed{f" because the {'Artist' if not artistFound else 'Venue' if not venueFound else ''} ID provided does not exist in our database" if not(artistFound or venueFound) else f', because {e}'}!""", category="error")
         db.session.rollback()
         abort(500)
     finally:
