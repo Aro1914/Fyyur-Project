@@ -115,6 +115,15 @@ def venues():
         return render_template('pages/venues.html', areas=data)
 
 
+def get_venue_result(search_term):
+    try:
+        data = Venue.query.filter(db.func.lower(Venue.name).like(
+            f"%{search_term.lower()}%")).order_by('name').all()
+        return data
+    except Exception as e:
+        print(e)
+
+
 @app.route('/venues/search', methods=['POST'])
 def search_venues():
     # TODO: implement search on venues with partial string search. Ensure it is case-insensitive.
@@ -130,8 +139,7 @@ def search_venues():
     #     }]
     # }
     try:
-        data = Venue.query.filter(db.func.lower(Venue.name).like(
-            f"%{request.form['search_term'].lower()}%")).order_by('name').all()
+        data = get_venue_result(request.form['search_term'])
         # print(request.form['search_term'].lower(), request.form.get('search_term', ''))
         venues = []
 
@@ -383,6 +391,15 @@ def artists():
         return render_template('pages/artists.html', artists=data)
 
 
+def get_artist_result(search_term):
+    try:
+        data = Artist.query.filter(db.func.lower(Artist.name).like(
+            f"%{search_term.lower()}%")).order_by('name').all()
+        return data
+    except Exception as e:
+        print(e)
+
+
 @app.route('/artists/search', methods=['POST'])
 def search_artists():
     # TODO: implement search on artists with partial string search. Ensure it is case-insensitive.
@@ -399,8 +416,7 @@ def search_artists():
 
     # print(request.form.get('search_term', ''))
     try:
-        data = Artist.query.filter(db.func.lower(Artist.name).like(
-            f"%{request.form['search_term'].lower()}%")).order_by('name').all()
+        data = get_artist_result(request.form['search_term'])
 
         artists = []
 
@@ -533,6 +549,8 @@ def show_artist(artist_id):
                     Venue.id == show.venue_id).first().image_link
                 past_show['start_time'] = str(show.start_time)
                 past_shows.append(past_show)
+
+            
 
             upcoming = Show.query.filter(
                 db.and_(Show.start_time > current_time, Show.artist_id == artist_id)).all()
@@ -786,6 +804,44 @@ def shows():
         abort(500)
     finally:
         return render_template('pages/shows.html', shows=data)
+
+
+@app.route('/shows/search', methods=['POST'])
+def search_show():
+    response = {}
+    try:
+        shows = []
+        print(request.form['filter_by'], request.form['filter_by'])
+        if request.form['filter_by'] == 'venue':
+            shows = db.session.query(Show).join(Venue).filter(Show.venue_id == Venue.id).filter(db.func.lower(Venue.name).like(
+                f"%{request.form['search_term'].lower()}%")).order_by('id').all()
+        if request.form['filter_by'] == 'artist':
+            shows = db.session.query(Show).join(Artist).filter(Show.artist_id == Artist.id).filter(db.func.lower(Artist.name).like(
+                f"%{request.form['search_term'].lower()}%")).order_by('id').all()
+        print(shows)
+        data = []
+
+        for show in shows:
+            info = {}
+            info['venue_id'] = show.venue_id
+            info['venue_name'] = Venue.query.filter(
+                Venue.id == show.venue_id).first().name
+            info['artist_id'] = show.artist_id
+            info['artist_name'] = Artist.query.filter(
+                Artist.id == show.artist_id).first().name
+            info['artist_image_link'] = Artist.query.filter(
+                Artist.id == show.artist_id).first().image_link
+            info['start_time'] = str(show.start_time)
+            data.append(info)
+            response["count"] = len(shows)
+            response["data"] = data
+    except:
+        flash(
+            f"Sorry, an error occurred while fetching your search results.", category="error")
+        db.session.close()
+        abort(500)
+    finally:
+        return render_template('pages/search_show.html', results=response, search_term=request.form.get('search_term', ''))
 
 
 @app.route('/shows/create')

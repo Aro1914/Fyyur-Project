@@ -75,6 +75,23 @@
                   aria-label="Search">
               </form>
               {% endif %}
+              {% if (request.endpoint == 'shows') or
+                (request.endpoint == 'search_show') %}
+              <form class="search" method="post" action="/shows/search">
+                <input class="form-control"
+                  type="search"
+                  name="search_term"
+                  placeholder="Find a show"
+                  aria-label="Search">
+                <div class="filter-group">
+                <span>Filter by: </span>                
+                <input type='radio' name="filter_by" value='venue' id="by_venue" checked/>
+                <label for="by_venue" class="filter-label"><span>Venue</span>
+                </label><input type='radio' name="filter_by" value='artist' id="by_artist"/>
+                <label for="by_artist" class="filter-label"><span>Artist</span></label>
+                </div>
+              </form>
+              {% endif %}
             </li>
           </ul>
           <ul class="nav navbar-nav">
