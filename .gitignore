@@ -2,3 +2,4 @@
 migrations/
 node_modules/
 venv/
+.env

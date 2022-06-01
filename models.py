@@ -73,7 +73,7 @@ class Artist(db.Model):
         "Show", back_populates="artist", cascade='all, delete')
 
     def __repr__(self):
-        return f"\n<Artist id: {self.id} name: {self.name} location_id: {self.location_id}>"
+        return f"\n<Artist id: {self.id} name: {self.name}>"
 
     # TODO: implement any missing fields, as a database migration using Flask-Migrate
 

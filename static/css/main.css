@@ -216,7 +216,7 @@ h2.monospace {
   align-items: center !important;
   width: 100% !important;
   gap: 10px;
-  padding:10px 10px 10px 20px;
+  padding: 10px 10px 10px 20px;
 }
 
 .filter-group input,
@@ -226,4 +226,32 @@ h2.monospace {
 
 .filter-label {
   display: inline-block;
+}
+
+.recent-postings {
+  width: 100% !important;
+  padding-right: 15px;
+  padding-left: 15px;
+}
+
+.home-list {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.home-list li {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgb(255, 187, 0,.5);
+  border-radius: 5px;
+}
+
+.home-list li a,
+.home-list h5 {
+  display: inline-block;
+  margin: 0 !important;
 }
