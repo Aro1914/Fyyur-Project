@@ -124,6 +124,10 @@ Acceptance Criteria
   * The relationship between the models should be accurately configured, and referential integrity amongst the models should be preserved.
   * `flask db migrate` should work, and populate my local postgres database with properly configured tables for this application's objects, including proper columns, column data types, constraints, defaults, and relationships that completely satisfy the needs of this application. The proper type of relationship between venues, artists, and shows should be configured.
 
+## Proof of Acceptance
+
+![image](https://user-images.githubusercontent.com/68448315/171586335-111f786d-7cce-40bf-8d7a-3470a59a3c2c.png)
+
 ##### Stand Out
 
 Looking to go above and beyond? This is the right section for you! Here are some challenges to make your submission stand out:
