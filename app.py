@@ -177,6 +177,7 @@ def show_venue(venue_id):
         data['website'] = venue_data.website
         data['facebook_link'] = venue_data.facebook_link
         data['seeking_talent'] = venue_data.seeking_talent
+        data['seeking_description'] = venue_data.seeking_description
         data['image_link'] = venue_data.image_link
         past_shows = []
         upcoming_shows = []
@@ -337,8 +338,6 @@ def show_artist(artist_id):
     # shows the artist page with the given artist_id
     # TODO: replace with real artist data from the artist table, using artist_id
     try:
-        data = {}
-        isFound = False
         artist_data = Artist.query.filter(Artist.id == artist_id).first()
         data = {}
         data['id'] = artist_data.id
@@ -418,7 +417,7 @@ def edit_artist_submission(artist_id):
             artist.phone = request.form['phone']
             artist.website = request.form['website_link']
             artist.facebook_link = request.form['facebook_link']
-            artist.seeking_talent = 'seeking_venue' in request.form
+            artist.seeking_venue = 'seeking_venue' in request.form
             artist.seeking_description = request.form['seeking_description']
             artist.image_link = request.form['image_link']
             db.session.commit()
