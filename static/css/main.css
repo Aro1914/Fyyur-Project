@@ -255,3 +255,7 @@ h2.monospace {
   display: inline-block;
   margin: 0 !important;
 }
+
+.fa-star::before{
+  color: #ffc63a !important;
+}

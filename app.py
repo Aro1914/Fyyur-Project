@@ -611,7 +611,26 @@ def search_show():
 @app.route('/shows/create')
 def create_shows():
     # renders form. do not touch.
+    def get_artist_list ():
+        choices = []
+        artists = db.session.query(Artist).all()
+        for artist in artists:
+            choices.append((artist.id, artist.id))
+    
+        return choices
+
+    def get_venue_list ():
+        choices = []
+        venues = db.session.query(Venue).all()        
+        for venue in venues:
+            choices.append((venue.id, venue.id))
+        
+        return choices
     form = ShowForm()
+
+    form.artist_id.choices = get_artist_list()
+    form.venue_id.choices = get_venue_list()
+
     return render_template('forms/new_show.html', form=form)
 
 
@@ -624,11 +643,11 @@ def create_show_submission():
         venueFound = True
         if Artist.query.filter(Artist.id == request.form['artist_id']).count() == 0:
             artistFound = False
-            raise
+            raise ValueError
 
         if Venue.query.filter(Venue.id == request.form['venue_id']).count() == 0:
             venueFound = False
-            raise
+            raise ValueError
 
         show = Show(artist_id=request.form['artist_id'],
                     venue_id=request.form['venue_id'], start_time=datetime.fromisoformat(str(request.form['start_time'])))
@@ -636,10 +655,15 @@ def create_show_submission():
         db.session.commit()
         # on successful db insert, flash success
         flash('Show was successfully listed!')
-    except ValueError as e:
-        # TODO: on unsuccessful db insert, flash an error instead.
-        # e.g., flash('An error occurred. Show could not be listed.')
-        # see: http://flask.pocoo.org/docs/1.0/patterns/flashing/
+    # except ValueError as e:
+    #     # TODO: on unsuccessful db insert, flash an error instead.
+    #     # e.g., flash('An error occurred. Show could not be listed.')
+    #     # see: http://flask.pocoo.org/docs/1.0/patterns/flashing/
+    #     flash(
+    #         f"""Show could not be listed{f" because the {'Artist' if not artistFound else 'Venue' if not venueFound else ''} ID provided does not exist in our database" if not(artistFound or venueFound) else f', because {e}'}!""", category="error")
+    #     db.session.rollback()
+    #     abort(500)
+    except Exception as e:
         flash(
             f"""Show could not be listed{f" because the {'Artist' if not artistFound else 'Venue' if not venueFound else ''} ID provided does not exist in our database" if not(artistFound or venueFound) else f', because {e}'}!""", category="error")
         db.session.rollback()
