@@ -1,7 +1,9 @@
 from datetime import datetime
+
 from flask_wtf import Form
-from wtforms import StringField, SelectField, SelectMultipleField, DateTimeField, BooleanField, DateTimeLocalField
-from wtforms.validators import DataRequired, AnyOf, URL, Regexp
+from wtforms import (BooleanField, DateTimeField, DateTimeLocalField,
+                     SelectField, SelectMultipleField, StringField)
+from wtforms.validators import URL, AnyOf, DataRequired, Regexp
 
 
 class ShowForm(Form):

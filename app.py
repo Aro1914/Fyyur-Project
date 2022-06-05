@@ -3,17 +3,23 @@
 #----------------------------------------------------------------------------#
 
 import datetime
-from enum import unique
-import json
-import dateutil.parser
-import babel
-from flask import render_template, request, Response, flash, redirect, url_for, abort, jsonify
+# import json
 import logging
-from logging import Formatter, FileHandler
-from flask_wtf import Form
-from forms import *
 import os
-from models import Show, Venue, Artist, app, db
+# from enum import unique
+from logging import FileHandler, Formatter
+
+import babel
+import dateutil.parser
+from flask import (Response, abort, flash, jsonify, redirect, render_template,
+                   request, url_for)
+
+from forms import *
+from models import Artist, Show, Venue, app, db
+
+# from flask_wtf import Form
+
+
 #----------------------------------------------------------------------------#
 # App Config.
 #----------------------------------------------------------------------------#
@@ -247,7 +253,7 @@ def create_venue_submission():
         finally:
             db.session.close()
     else:
-        for field, message in form.errors.items():
+        for message in form.errors.items():
             flash(f"{str(message)[2:len(str(message))-2]}!", category="danger")
     return redirect(url_for('index'))
 
@@ -429,7 +435,7 @@ def edit_artist_submission(artist_id):
         finally:
             db.session.close()
     else:
-        for field, message in form.errors.items():
+        for message in form.errors.items():
             flash(f"{str(message)[2:len(str(message))-2]}!", category="danger")
     return redirect(url_for('show_artist', artist_id=artist_id))
 
@@ -475,7 +481,7 @@ def edit_venue_submission(venue_id):
         finally:
             db.session.close()
     else:
-        for field, message in form.errors.items():
+        for message in form.errors.items():
             flash(f"{str(message)[2:len(str(message))-2]}!", category="danger")
     return redirect(url_for('show_venue', venue_id=venue_id))
 
@@ -520,7 +526,7 @@ def create_artist_submission():
         finally:
             db.session.close()
     else:
-        for field, message in form.errors.items():
+        for message in form.errors.items():
             flash(f"{str(message)[2:len(str(message))-2]}!", category="danger")
     return redirect(url_for('index'))
 
@@ -655,17 +661,17 @@ def create_show_submission():
         db.session.commit()
         # on successful db insert, flash success
         flash('Show was successfully listed!')
-    # except ValueError as e:
-    #     # TODO: on unsuccessful db insert, flash an error instead.
-    #     # e.g., flash('An error occurred. Show could not be listed.')
-    #     # see: http://flask.pocoo.org/docs/1.0/patterns/flashing/
-    #     flash(
-    #         f"""Show could not be listed{f" because the {'Artist' if not artistFound else 'Venue' if not venueFound else ''} ID provided does not exist in our database" if not(artistFound or venueFound) else f', because {e}'}!""", category="error")
-    #     db.session.rollback()
-    #     abort(500)
+    except ValueError as e:
+        # TODO: on unsuccessful db insert, flash an error instead.
+        # e.g., flash('An error occurred. Show could not be listed.')
+        # see: http://flask.pocoo.org/docs/1.0/patterns/flashing/
+        flash(
+            f"""Show could not be listed{f" because the {'Artist' if not artistFound else 'Venue' if not venueFound else ''} ID provided does not exist in our database" if not artistFound or not venueFound else f', because {e}'}!""", category="error")
+        db.session.rollback()
+        abort(500)
     except Exception as e:
         flash(
-            f"""Show could not be listed{f" because the {'Artist' if not artistFound else 'Venue' if not venueFound else ''} ID provided does not exist in our database" if not(artistFound or venueFound) else f', because {e}'}!""", category="error")
+            f"""Show could not be listed{f', because {e}'}!""", category="error")
         db.session.rollback()
         abort(500)
     finally:

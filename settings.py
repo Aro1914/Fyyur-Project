@@ -1,8 +1,9 @@
-from dotenv import load_dotenv
 import os
 
+from dotenv import load_dotenv
+
 # All database connection variables are defined in a .env file.
-# So you need install the python-dotenv module to use environment variables for the project
+# So you need to install the python-dotenv module to use environment variables for the project
 # Then create a .env file and pass in the following
 # -----------------------
 # DB_NAME = <Paste your database name here>
