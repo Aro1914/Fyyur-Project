@@ -126,7 +126,7 @@ Acceptance Criteria
 
 ## Proof of Acceptance
 
-![image](https://user-images.githubusercontent.com/68448315/171586335-111f786d-7cce-40bf-8d7a-3470a59a3c2c.png)
+![image](https://user-images.githubusercontent.com/68448315/175488192-eb19472e-31fd-4d0f-afb4-7ecc2203f1e2.png)
 
 ##### Stand Out
 
